@@ -3,13 +3,13 @@
 ## Install required packages
 
 ```
-pip install -r requirements.txt 
+> pip install -r requirements.txt 
 ```
 
 ## Run tests
 
 ```
-python -m unittest discover -s tests
+> python -m unittest discover -s tests
 ```
 
 ## Contributing
@@ -35,6 +35,38 @@ been created then create one using the convetion `test_{module name}.py`.
 
 Push your branch to the repo and then create a pull request. Assign
 `ece-jacob-scott` as a reviewer. 
+
+### Packaging the library
+
+First step before uploading the library to pypi is to increment the version
+number in the `setup.py` file.
+
+Then, to allow the package to be distributed with our local pypi server you need
+to first package it using `wheel`. To do this enter the command below, it should
+create the folders `BLSTController.egg...`, `build`, and `dist`. These folders
+contain the processed library and will allow pypi to distribute our library.
+
+```
+> python setup.py sdist bdist_wheel
+```
+
+Once all the source files are built you need to upload the source files to the
+server using the command below (skip the first one if twine is already installed
+). You will be prompted to enter credentials when uploading the files to the
+server (contact Jacob or Austin for credentials). The skip existing flag is used
+so that you only upload the most recent versions of the package and don't
+overwrite existing versions on the server.
+
+```
+> pip install twine
+> twine upload --skip-existing --repository-url https://pypi.austinbunker.com dist/*
+```
+
+Finally to install the library for another project just use the command below.
+
+```
+> pip install --index-url https://pypi.austinbunker.com BLSTController
+```
 
 ## Code Structure
 
