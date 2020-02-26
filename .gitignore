@@ -2,6 +2,9 @@ __pycache__/
 
 /.vscode
 
+# File used for testing package
+t.py
+
 # These are folders created for distribution. I haven't gotten a confirm or deny
 # on whether I should track these or not. My gut says they shouldn't be tracked
 # so that's what is happening.
