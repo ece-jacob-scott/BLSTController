@@ -1,7 +1,5 @@
 """
 Contains the definitions for the classes that handle the serial communication
-
-TODO: Make 'CLOSE' directive available to the observer (maybe?)
 """
 
 from serial import Serial
@@ -45,7 +43,8 @@ class Controller():
         """
         Construct a new Controller with a serial connection
 
-        :serial_config: Configuration for serial connection
+        :serial_config:
+            Configuration for serial connection
         """
         self.conn: Serial = Serial(
             port=serial_config['port'],
@@ -58,7 +57,8 @@ class Controller():
         """
         Add an observer to the list of observers
 
-        :observer: Observer to add
+        :observer:
+            Observer to add
         """
         observer._controller = self
         self.observers.add(observer)
@@ -68,7 +68,7 @@ class Controller():
         Starts listening for serial data and updating observers
         """
         with self.conn as serial:
-            line = serial.readline() 
+            line = serial.readline()
             # Inform the observers that connection is open
             self._notify(
                 Action('OPEN', None)
@@ -88,7 +88,8 @@ class Controller():
         Go through all the observers and notify them that something has 
         happened
 
-        :data: Object containing the update
+        :data:
+            Object containing the update
         """
         for observer in self.observers:
             observer.update(data)

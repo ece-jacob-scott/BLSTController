@@ -55,6 +55,11 @@ class Action():
         CLOSE|\n
         A close message is just sent as the word CLOSE at the start of the
         packet and punctuated with a pipe (|) and newline (\n).
+
+        :line: 
+            A string containing information from the Arduino
+        :raises RuntimeError: 
+            Raises a runtime error every time there is an unknown packet
         """
         # Arduino sends 'keep alive' packets to keep the serial connection open
         # the keep alive packet is just an empty byte
@@ -70,10 +75,10 @@ class Action():
             return Action(directive, value)
         # Handles foot action
         try:
-            [l_pitch, l_yaw, l_roll, 
+            [l_pitch, l_yaw, l_roll,
                 r_pitch, r_yaw, r_roll] = list(map(int, line.split(' ')))
         except ValueError as ex:
-            raise RuntimeError(f'FOOT packet unrecognized\n{line}') from ex
+            raise RuntimeError(f'FOOT packet unrecognized: {line}') from ex
         return Action('FOOT', {
             'left': {
                 'pitch': l_pitch,
