@@ -31,10 +31,20 @@ class Observer(metaclass=abc.ABCMeta):
         """
         pass
 
+    def error_handler(self, error: BaseException) -> Any:
+        """
+        Optional error handler method, by default the error_handler function
+        just returns without doing anything and swallows the error. Please note
+        that every observer will get the error passed to it they are attached
+        to the observable. This means that the user will have to handle a
+        single error multiple times.
+        """
+        return
+
 
 class Controller():
     """
-    The Controller class implements the observer pattern to provide the
+    The Controller class implements the observable pattern to provide the
     consumer with an interface with which to interact with a serial connection
     which only recieves data.
     """
@@ -77,11 +87,19 @@ class Controller():
                 if not self.conn.isOpen():
                     return
                 line = serial.readline().decode('utf-8')
-                action = Action.parse(line)
+                try:
+                    action = Action.parse(line)
+                except e:
+                    # If parse raises an error then handle that error
+                    self._handle_error(e)
                 if action.directive == 'CLOSE':
                     self._notify(action)
                     break
                 self._notify(action)
+
+    def _handle_error(self, error: BaseException) -> None:
+        for observer in self.observers:
+            observer.error_handler(error)
 
     def _notify(self, data: Any) -> None:
         """
