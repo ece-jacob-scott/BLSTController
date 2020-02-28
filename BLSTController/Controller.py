@@ -77,7 +77,10 @@ class Controller():
                 if not self.conn.isOpen():
                     return
                 line = serial.readline().decode('utf-8')
-                action = Action.parse(line)
+                try:
+                    action = Action.parse(line)
+                except:
+                    continue
                 if action.directive == 'CLOSE':
                     self._notify(action)
                     break
