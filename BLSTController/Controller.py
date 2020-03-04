@@ -3,7 +3,7 @@ Contains the definitions for the classes that handle the serial communication
 """
 
 from serial import Serial
-from typing import Dict, Any, Set
+from typing import Dict, Any, Set, Callable
 from BLSTController.Action import Action
 import abc
 
@@ -63,6 +63,59 @@ class Controller():
         observer._controller = self
         self.observers.add(observer)
 
+    def __builder(self, update_function: Callable[[Action], Any]) -> Observer:
+        """
+        Helper function which creates an observer from a function of one
+        argument. The argument in the passed function is expected to be an
+        Action argument.
+
+        :update_function:
+            A function with one Action argument to be added to an observer
+        :raises Execption:
+            Raises an exception if the update function is malformed
+        :returns:
+            An observer instance with the update method set to the 
+            update_function parameter
+        """
+        # Check to see if the passed function has the correct number of
+        # arguments. If not raise an error.
+        try:
+            if update_function.__code__.co_argcount != 1:
+                raise Exception("Argument func doesn't have one argument")
+        except AttributeError:
+            raise Exception("Argument func not a function")
+        except Exception as e:
+            raise e
+
+        # Create a new function with self as the first argument
+        def selfFunc(self, arg):
+            self._controller_state = arg
+            return update_function(arg)
+
+        # Create a new observer type with the new update function
+        o = type("o", (), {
+            "__init__": Observer.__init__,
+            "update": selfFunc
+        })
+        return o()
+
+    def attach_function(self, func: Callable[[Action], Any]) -> None:
+        """
+        Helper function which accepts a function as a parameter and creates an
+        Observer from that function replacing the Observer's update method with
+        the passed function. The newly created Observer is then attached to this
+        controller automatically.
+
+        :func:
+            Function used in the operation of an observer
+        :raises Execption:
+            Raises an exception if the update function is malformed
+        :returns:
+            None
+        """
+        o = self.__builder(func)
+        self.attach(o)
+
     def start(self) -> None:
         """
         Starts listening for serial data and updating observers
@@ -70,7 +123,7 @@ class Controller():
         with self.conn as serial:
             line = serial.readline()
             # Inform the observers that connection is open
-            self._notify(
+            self.__notify(
                 Action('OPEN', None)
             )
             while True:
@@ -82,14 +135,14 @@ class Controller():
                 except:
                     continue
                 if action.directive == 'CLOSE':
-                    self._notify(action)
+                    self.__notify(action)
                     break
-                self._notify(action)
+                self.__notify(action)
 
-    def _notify(self, data: Any) -> None:
+    def __notify(self, data: Action) -> None:
         """
         Go through all the observers and notify them that something has 
-        happened
+        happened using the passed Action instance.
 
         :data:
             Object containing the update
