@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="BLSTController",
-    version="0.1.3",
+    version="0.1.4",
     author="Jacob Scott",
     author_email="jscott35@uic.edu",
     description="Main library for allowing control of BLST foot pedals.",
