@@ -1,7 +1,6 @@
 import glob
 import sys
 import serial
-from BLSTController import Observer
 from typing import List
 
 # https://tinyurl.com/w7pkw8z - Taken from SO
