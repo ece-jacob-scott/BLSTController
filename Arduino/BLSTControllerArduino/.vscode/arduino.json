@@ -1,5 +1,0 @@
-{
-    "board": "arduino:avr:uno",
-    "sketch": "analogReadTest.ino",
-    "port": "/dev/ttyACM0"
-}
