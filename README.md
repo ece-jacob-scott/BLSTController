@@ -80,3 +80,11 @@ has it's own folder.
 Python code lives in the project root directory for now. Later if needed we can
 move more modules to their own folders if the code requires a higher level of
 organization.
+
+### STL Files
+
+The STL files for the footpedal live within the STL_Files folder. Each pedal is
+the same so everything will need to be printed twice. The Pot_holder.stl is the 
+part that holds the potentiometers for the pitch and roll axis so it will need to
+be printed 4 times (two for each foot). The Full_Design.stl is the stl file that
+shows the final configuration for one pedal.
